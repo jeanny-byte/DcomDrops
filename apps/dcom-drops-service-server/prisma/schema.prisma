@@ -1,0 +1,63 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Notifications {
+  createdAt           DateTime @default(now())
+  id                  String   @id @default(cuid())
+  message             String?
+  notificationMessage String?
+  relUserNotification String?
+  updatedAt           DateTime @updatedAt
+  user                User?    @relation(fields: [userId], references: [id])
+  userId              String?
+  userNotification    String?
+}
+
+model Airdrops {
+  commentsItems Comments[]
+  createdAt     DateTime   @default(now())
+  description   String?
+  id            String     @id @default(cuid())
+  image         Json?
+  partakeLink   String?
+  postedAt      DateTime?
+  title         String?
+  updatedAt     DateTime   @updatedAt
+}
+
+model Comments {
+  airdrop         Airdrops? @relation(fields: [airdropId], references: [id])
+  airdropId       String?
+  airdropRelation String?
+  content         String?
+  createdAt       DateTime  @default(now())
+  downvotes       Int?
+  id              String    @id @default(cuid())
+  relAirdrop      String?
+  relUser         String?
+  updatedAt       DateTime  @updatedAt
+  upvotes         Int?
+  user            User?     @relation(fields: [userId], references: [id])
+  userId          String?
+  userRelation    String?
+}
+
+model User {
+  commentsItems      Comments[]
+  createdAt          DateTime        @default(now())
+  email              String?         @unique
+  firstName          String?
+  id                 String          @id @default(cuid())
+  lastName           String?
+  notificationsItems Notifications[]
+  password           String
+  roles              Json
+  updatedAt          DateTime        @updatedAt
+  username           String          @unique
+}
